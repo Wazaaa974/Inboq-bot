@@ -2,14 +2,27 @@
 
 import json
 import logging
+import os
 
 from openai import AsyncOpenAI
 
-from bot.config import OPENAI_API_KEY, PROFESSIONAL_PROFILE
+from bot.config import PROFESSIONAL_PROFILE
 
 logger = logging.getLogger(__name__)
 
-client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+_client = None
+
+
+def get_client():
+    """Lazy-initialize the OpenAI client (avoids import-time crash on Railway)."""
+    global _client
+    if _client is None:
+        api_key = os.environ.get("OPENAI_API_KEY", "")
+        if not api_key:
+            raise RuntimeError("OPENAI_API_KEY environment variable is not set!")
+        _client = AsyncOpenAI(api_key=api_key)
+    return _client
+
 
 SYSTEM_PROMPT = f"""You are a professional, polite assistant for an independent professional.
 
@@ -42,6 +55,7 @@ async def analyze_message(
     message_text: str, conversation_history: list[dict]
 ) -> dict:
     """Analyze a message using GPT-4o-mini and return structured action/response."""
+    client = get_client()
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     messages.extend(conversation_history)
     messages.append({"role": "user", "content": message_text})
