@@ -1,5 +1,6 @@
 """Main message handler — filtering, AI analysis, and escalation."""
 
+import asyncio
 import logging
 from datetime import datetime, timezone
 
@@ -86,10 +87,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "summary": result["lead_summary"],
             "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-        await notify_admin(
-            context,
-            user_id=user_id,
-            username=user.username,
-            full_name=full_name or "Unknown",
-            lead_summary=result["lead_summary"],
+        asyncio.create_task(
+            notify_admin(
+                context,
+                user_id=user_id,
+                username=user.username,
+                full_name=full_name or "Unknown",
+                lead_summary=result["lead_summary"],
+            )
         )

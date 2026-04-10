@@ -11,3 +11,7 @@ PROFESSIONAL_PROFILE = os.environ.get(
     "PROFESSIONAL_PROFILE",
     "An independent professional offering high-quality services.",
 )
+WELCOME_MESSAGE = os.environ.get(
+    "WELCOME_MESSAGE",
+    "Bonjour ! Comment puis-je vous aider ?",
+)

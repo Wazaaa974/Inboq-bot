@@ -34,6 +34,7 @@ async def notify_admin(
             chat_id=int(ADMIN_CHAT_ID),
             text=text,
             parse_mode="HTML",
+            disable_notification=True,
         )
     except Exception as e:
         logger.error("Failed to notify admin: %s", e)
