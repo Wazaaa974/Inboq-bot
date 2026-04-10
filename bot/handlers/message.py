@@ -1,7 +1,7 @@
 """Main message handler — filtering, AI analysis, and escalation."""
 
-import asyncio
 import logging
+import os
 from datetime import datetime, timezone
 
 from telegram import Update
@@ -9,7 +9,6 @@ from telegram.ext import ContextTypes
 
 from bot.services.filter_service import check_message
 from bot.services.openai_service import analyze_message
-from bot.services.notify_service import notify_admin
 
 logger = logging.getLogger(__name__)
 
@@ -87,12 +86,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "summary": result["lead_summary"],
             "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-        asyncio.create_task(
-            notify_admin(
-                context,
-                user_id=user_id,
-                username=user.username,
-                full_name=full_name or "Unknown",
-                lead_summary=result["lead_summary"],
+        admin_chat_id = int(os.getenv("ADMIN_CHAT_ID", "0"))
+        if admin_chat_id:
+            contact = f"@{user.username}" if user.username else f"ID: {user_id}"
+            notification_text = (
+                "🔔 <b>New Qualified Lead</b>\n\n"
+                f"<b>Contact:</b> {contact}\n"
+                f"<b>Name:</b> {full_name or 'Unknown'}\n"
+                f"<b>Summary:</b> {result['lead_summary']}"
             )
-        )
+            try:
+                await context.bot.send_message(
+                    chat_id=admin_chat_id,
+                    text=notification_text,
+                    parse_mode="HTML",
+                    disable_notification=True,
+                )
+            except Exception:
+                logger.error("Failed to send lead notification to admin %s", admin_chat_id)
