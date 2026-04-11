@@ -1,0 +1,37 @@
+OBJET : Votre bot Telegram est en ligne ! 🎉
+
+---
+
+Bonjour Marie,
+
+Bonne nouvelle — votre assistant Telegram est opérationnel !
+
+Testez-le maintenant → t.me/marie_coiffure_lyon_bot
+
+──────────────────────────────────────────
+CE QUE VOTRE BOT SAIT FAIRE
+──────────────────────────────────────────
+✓ Répondre à vos questions fréquentes (horaires, tarifs, réservation…)
+✓ Présenter vos services et prix
+✓ Qualifier les prospects sérieux et vous envoyer un résumé
+✓ Filtrer les messages non pertinents
+✓ Répondre 24h/24, 7j/7
+
+──────────────────────────────────────────
+POUR TESTER, ESSAYEZ CES MESSAGES
+──────────────────────────────────────────
+→ "Bonjour, quels sont vos tarifs ?"
+→ "Vous travaillez le samedi ?"
+→ "Je voudrais réserver une coloration"
+
+──────────────────────────────────────────
+MODIFIER LA CONFIGURATION
+──────────────────────────────────────────
+Si vous souhaitez modifier quoi que ce soit (nouveaux services, changement de tarifs, nouvelles FAQ…), répondez simplement à cet email et nous mettrons à jour votre bot sous 24h.
+
+Rappel : votre plan Starter inclut 500 réponses par mois. Si cette limite approche, nous vous préviendrons.
+
+Bon business avec Inboq !
+
+L'équipe Inboq
+support@inboq.com

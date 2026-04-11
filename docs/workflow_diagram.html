@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inboq — Workflow Onboarding</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 40px 20px;
+      color: #1a202c;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      color: #1a365d;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #4a5568;
+    }
+    .legend-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #90cdf4, #2b6cb0);
+      border-radius: 2px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .step:nth-child(odd) { flex-direction: row; }
+    .step:nth-child(even) { flex-direction: row-reverse; }
+
+    .step-card {
+      width: calc(50% - 44px);
+      background: white;
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-left: 4px solid #ccc;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .step-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+
+    .step:nth-child(odd) .step-card { border-left: 4px solid var(--color); }
+    .step:nth-child(even) .step-card { border-right: 4px solid var(--color); border-left: none; }
+
+    .step-icon {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .step-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      color: white;
+      background: var(--color);
+    }
+
+    .step-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1a202c;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: #4a5568;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .step-timing {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: #718096;
+      background: #f7fafc;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .step-detail {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #f7fafc;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #4a5568;
+    }
+    .step-detail ul {
+      padding-left: 16px;
+      margin-top: 4px;
+    }
+    .step-detail li {
+      margin-bottom: 3px;
+    }
+
+    /* Bug banner */
+    .bug-banner {
+      max-width: 820px;
+      margin: 20px auto 40px;
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-left: 4px solid #e53e3e;
+      border-radius: 10px;
+      padding: 16px 20px;
+    }
+    .bug-banner h3 {
+      color: #c53030;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .bug-item {
+      font-size: 13px;
+      color: #742a2a;
+      margin-bottom: 8px;
+      padding-left: 12px;
+      border-left: 2px solid #fc8181;
+    }
+    .bug-item strong { display: block; margin-bottom: 2px; }
+
+    /* Summary bar */
+    .summary {
+      max-width: 820px;
+      margin: 0 auto 40px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .summary-card {
+      flex: 1;
+      min-width: 160px;
+      background: white;
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .summary-card .number {
+      font-size: 28px;
+      font-weight: 800;
+      color: #2b6cb0;
+    }
+    .summary-card .label {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🤖 Inboq — Workflow Onboarding</h1>
+  <p class="subtitle">De la vente Stripe au bot Telegram en production</p>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#48bb78"></div>
+      <span>Automatique (Stripe/Railway)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#4299e1"></div>
+      <span>Action de ta part (Inboq)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#ed8936"></div>
+      <span>Action du client</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot" style="background:#9f7aea"></div>
+      <span>Technique (Railway/GitHub)</span>
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="summary-card">
+      <div class="number">8</div>
+      <div class="label">étapes au total</div>
+    </div>
+    <div class="summary-card">
+      <div class="number">~1h</div>
+      <div class="label">de travail effectif</div>
+    </div>
+    <div class="summary-card">
+      <div class="number">24–48h</div>
+      <div class="label">SLA client</div>
+    </div>
+    <div class="summary-card">
+      <div class="number">4</div>
+      <div class="label">variables Railway</div>
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <div class="step" style="--color: #48bb78">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Automatique</span>
+        </div>
+        <div class="step-title">Paiement Stripe</div>
+        <div class="step-desc">Le client paie (39€ Starter ou 89€ Pro). Stripe envoie un webhook à inboq.nanocorp.app et redirige le client vers la page de succès. Tu reçois l'email + montant + session ID.</div>
+        <span class="step-timing">⚡ 0 min — automatique</span>
+      </div>
+      <div class="step-icon">💳</div>
+    </div>
+
+    <div class="step" style="--color: #4299e1">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Inboq</span>
+        </div>
+        <div class="step-title">Email de bienvenue</div>
+        <div class="step-desc">Tu envoies l'email de bienvenue au client avec le questionnaire (10 questions) et les instructions pour créer son bot via @BotFather.</div>
+        <div class="step-detail">
+          <strong>Contenu de l'email :</strong>
+          <ul>
+            <li>Confirmation de l'abonnement</li>
+            <li>Lien / questionnaire à remplir</li>
+            <li>Instructions @BotFather pas à pas</li>
+            <li>Adresse email pour envoyer le token</li>
+          </ul>
+        </div>
+        <span class="step-timing">⏱ ~10 min · Délai cible : &lt; 2h après paiement</span>
+      </div>
+      <div class="step-icon">📧</div>
+    </div>
+
+    <div class="step" style="--color: #ed8936">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Client</span>
+        </div>
+        <div class="step-title">Questionnaire + Token Telegram</div>
+        <div class="step-desc">Le client remplit le questionnaire (services, tarifs, horaires, règles, FAQ…) et crée son bot via @BotFather. Il t'envoie le token par email.</div>
+        <div class="step-detail">
+          <strong>Si pas de réponse :</strong> relancer après 48h
+        </div>
+        <span class="step-timing">⏱ Dépend du client (~10-15 min de son côté)</span>
+      </div>
+      <div class="step-icon">📝</div>
+    </div>
+
+    <div class="step" style="--color: #4299e1">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Inboq</span>
+        </div>
+        <div class="step-title">Création du JSON de config</div>
+        <div class="step-desc">Tu copies client_config_template.json et tu le remplis avec les réponses du questionnaire. Valider que le JSON est syntaxiquement correct.</div>
+        <div class="step-detail">
+          <strong>Fichier créé :</strong> clients/{client_id}_config.json
+        </div>
+        <span class="step-timing">⏱ ~15 min</span>
+      </div>
+      <div class="step-icon">⚙️</div>
+    </div>
+
+    <div class="step" style="--color: #4299e1">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Inboq</span>
+        </div>
+        <div class="step-title">Génération du System Prompt</div>
+        <div class="step-desc">À partir du JSON, tu génères le PROFESSIONAL_PROFILE — la "personnalité" du bot. Ce texte sera collé dans la variable Railway.</div>
+        <div class="step-detail">
+          <strong>Inclut :</strong> profil, services, tarifs, dispo, règles, FAQ, ton, qualification
+        </div>
+        <span class="step-timing">⏱ ~5 min</span>
+      </div>
+      <div class="step-icon">🧠</div>
+    </div>
+
+    <div class="step" style="--color: #9f7aea">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Technique</span>
+        </div>
+        <div class="step-title">Déploiement Railway</div>
+        <div class="step-desc">Créer un nouveau projet Railway depuis le repo GitHub Wazaaa974/Inboq-bot. Configurer les 5 variables d'environnement. Vérifier les logs.</div>
+        <div class="step-detail">
+          <strong>Variables à renseigner :</strong>
+          <ul>
+            <li>TELEGRAM_BOT_TOKEN</li>
+            <li>OPENAI_API_KEY</li>
+            <li>ADMIN_CHAT_ID (mettre 0 provisoirement)</li>
+            <li>PROFESSIONAL_PROFILE</li>
+            <li>WELCOME_MESSAGE</li>
+          </ul>
+        </div>
+        <span class="step-timing">⏱ ~15 min</span>
+      </div>
+      <div class="step-icon">🚂</div>
+    </div>
+
+    <div class="step" style="--color: #9f7aea">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Technique</span>
+        </div>
+        <div class="step-title">ADMIN_CHAT_ID + Tests</div>
+        <div class="step-desc">Envoyer /start au bot → récupérer le chat_id → mettre à jour la variable Railway. Puis tester les 4 scénarios clés.</div>
+        <div class="step-detail">
+          <strong>Scénarios de test :</strong>
+          <ul>
+            <li>/start → message de bienvenue correct ?</li>
+            <li>Question FAQ → bonne réponse ?</li>
+            <li>Demande de RDV → qualification ?</li>
+            <li>Notification admin → reçue en privé ?</li>
+          </ul>
+        </div>
+        <span class="step-timing">⏱ ~15 min</span>
+      </div>
+      <div class="step-icon">🧪</div>
+    </div>
+
+    <div class="step" style="--color: #4299e1">
+      <div class="step-card">
+        <div class="step-header">
+          <span class="step-badge">Inboq</span>
+        </div>
+        <div class="step-title">Email go-live 🎉</div>
+        <div class="step-desc">Envoyer l'email de confirmation au client avec le lien vers son bot (t.me/username_bot). Lui rappeler qu'il peut demander des modifications par email.</div>
+        <span class="step-timing">⏱ ~5 min · SLA total : 24-48h après paiement</span>
+      </div>
+      <div class="step-icon">🎉</div>
+    </div>
+
+  </div>
+
+  <!-- Bug banner -->
+  <div class="bug-banner">
+    <h3>⚠️ Bugs connus (à corriger dans le code)</h3>
+    <div class="bug-item">
+      <strong>Bug #1 — /start affiche le system prompt complet</strong>
+      Fix : ajouter WELCOME_MESSAGE comme variable séparée dans Railway + modifier bot/handlers/start.py
+    </div>
+    <div class="bug-item">
+      <strong>Bug #2 — Notification lead envoyée dans la conversation client</strong>
+      Fix : dans bot/handlers/message.py, remplacer update.effective_chat.id par ADMIN_CHAT_ID dans le send_message de la notification
+    </div>
+  </div>
+
+</body>
+</html>

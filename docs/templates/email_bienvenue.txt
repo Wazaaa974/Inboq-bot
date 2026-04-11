@@ -1,0 +1,73 @@
+OBJET : Bienvenue chez Inboq — Votre assistant Telegram arrive bientôt 🤖
+
+---
+
+Bonjour Marie,
+
+Merci pour votre confiance ! Votre abonnement Inboq Starter (39€/mois) est bien activé. Nous allons maintenant configurer votre bot Telegram personnalisé.
+
+Votre bot sera opérationnel sous 24 à 48 heures après réception de vos informations.
+
+──────────────────────────────────────────
+ÉTAPE 1 — Remplissez le questionnaire (5 min)
+──────────────────────────────────────────
+Répondez aux questions ci-dessous et renvoyez cet email complété à support@inboq.com :
+
+1. Identité professionnelle
+   - Nom / Pseudo professionnel : _______________
+   - Nom d'affichage du bot : _______________
+
+2. Langue principale : _______________
+
+3. Services proposés (soyez précis) :
+   - Service 1 : _______________
+   - Service 2 : _______________
+   - (ajoutez autant de lignes que nécessaire)
+
+4. Tarifs par service : _______________
+   Y a-t-il des tarifs que le bot ne doit PAS communiquer ? _______________
+
+5. Disponibilités
+   - Jours de travail : _______________
+   - Horaires : _______________
+
+6. Localisation
+   - Ville / Adresse (si applicable) : _______________
+   - Déplacements à domicile ? _______________
+
+7. Règles spécifiques
+   - Ce que vous acceptez : _______________
+   - Ce que vous refusez : _______________
+
+8. Message de bienvenue souhaité + ton du bot (formel, amical, pro…) : _______________
+
+9. FAQ — 3 questions fréquentes avec réponses :
+   - Q : _______________ → R : _______________
+   - Q : _______________ → R : _______________
+   - Q : _______________ → R : _______________
+
+10. Liens Instagram / site web / autre : _______________
+
+──────────────────────────────────────────
+ÉTAPE 2 — Créez votre bot Telegram (2 min)
+──────────────────────────────────────────
+1. Ouvrez Telegram et cherchez @BotFather
+2. Tapez /newbot
+3. Choisissez un nom (ex : "Assistant de Marie")
+4. Choisissez un username unique terminant par "bot" (ex : marie_coiffure_lyon_bot)
+5. BotFather vous donnera un TOKEN (ressemble à : 123456789:ABCdefGHIjklMNO...)
+6. Copiez ce token et envoyez-le nous par email à support@inboq.com
+
+⚠️ Ne partagez jamais ce token publiquement. Il donne le contrôle total du bot.
+
+Optionnel mais recommandé :
+- Ajoutez une photo de profil : /setuserpic dans BotFather
+- Ajoutez une description : /setdescription dans BotFather
+
+──────────────────────────────────────────
+Des questions ? Répondez directement à cet email.
+──────────────────────────────────────────
+
+À très vite,
+L'équipe Inboq
+support@inboq.com
