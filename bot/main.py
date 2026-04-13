@@ -3,6 +3,7 @@ import logging
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
 
 from bot.config import TELEGRAM_BOT_TOKEN
+from bot.services.storage_service import init_db
 from bot.handlers.start import start_command
 from bot.handlers.message import handle_message
 from bot.handlers.admin import stats_command, recent_command
@@ -17,6 +18,8 @@ logger = logging.getLogger(__name__)
 def main():
     if not TELEGRAM_BOT_TOKEN:
         raise RuntimeError("TELEGRAM_BOT_TOKEN is not set")
+
+    init_db()
 
     app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
 

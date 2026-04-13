@@ -9,29 +9,11 @@ from telegram.ext import ContextTypes
 
 from bot.services.filter_service import check_message
 from bot.services.openai_service import analyze_message
+from bot.services import storage_service
 
 logger = logging.getLogger(__name__)
 
-# In-memory conversation history per user: {user_id: [{"role": ..., "content": ...}]}
-conversations: dict[int, list[dict]] = {}
-
-# Stats tracking
-stats = {
-    "total_messages": 0,
-    "messages_today": 0,
-    "last_reset_date": datetime.now(timezone.utc).date(),
-    "qualified_leads": [],  # list of {"user_id", "name", "summary", "timestamp"}
-}
-
 MAX_HISTORY = 20  # keep last N messages per conversation
-
-
-def _reset_daily_counter():
-    """Reset the daily message counter if the date has changed."""
-    today = datetime.now(timezone.utc).date()
-    if stats["last_reset_date"] != today:
-        stats["messages_today"] = 0
-        stats["last_reset_date"] = today
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -43,9 +25,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = user.id
     message_text = update.message.text
 
-    _reset_daily_counter()
-    stats["total_messages"] += 1
-    stats["messages_today"] += 1
+    storage_service.increment_stat("total_messages")
+    storage_service.increment_stat(_today_key())
 
     # Step 1: Filter
     rejection = check_message(user_id, message_text)
@@ -59,7 +40,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Step 2: Get conversation history
-    history = conversations.get(user_id, [])
+    history = storage_service.get_history(user_id)
 
     # Step 3: AI analysis
     result = await analyze_message(message_text, history)
@@ -67,10 +48,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Step 4: Update conversation history
     history.append({"role": "user", "content": message_text})
     history.append({"role": "assistant", "content": result["response_text"]})
-    # Trim to keep memory bounded
     if len(history) > MAX_HISTORY:
         history = history[-MAX_HISTORY:]
-    conversations[user_id] = history
+    storage_service.save_history(user_id, history)
 
     # Step 5: Respond
     if result["response_text"]:
@@ -79,13 +59,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Step 6: Escalate if qualified
     if result["action"] == "escalate" and result["lead_qualified"]:
         full_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
-        stats["qualified_leads"].append({
-            "user_id": user_id,
-            "name": full_name or "Unknown",
-            "username": user.username,
-            "summary": result["lead_summary"],
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        timestamp = datetime.now(timezone.utc).isoformat()
+        storage_service.save_lead(
+            user_id=user_id,
+            name=full_name or "Unknown",
+            username=user.username,
+            summary=result["lead_summary"],
+            timestamp=timestamp,
+        )
         admin_chat_id = int(os.getenv("ADMIN_CHAT_ID", "0"))
         if admin_chat_id:
             contact = f"@{user.username}" if user.username else f"ID: {user_id}"
@@ -104,3 +85,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
             except Exception:
                 logger.error("Failed to send lead notification to admin %s", admin_chat_id)
+
+
+def _today_key() -> str:
+    """Stat key for today's message count, e.g. 'messages_2026-04-13'."""
+    return f"messages_{datetime.now(timezone.utc).date()}"

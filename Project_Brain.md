@@ -124,6 +124,24 @@ Client reçoit lien bot Telegram + instructions
 
 ---
 
+## ✅ Changelog Technique
+
+### 2026-04-13
+
+| Tâche | Fichiers modifiés | Statut |
+|-------|-------------------|--------|
+| Bug #1 — `/start` affiche `WELCOME_MESSAGE` | `bot/handlers/start.py`, `bot/config.py` | ✅ Vérifié OK (rien à modifier) |
+| Bug #2 — notification admin utilise `ADMIN_CHAT_ID` (env var) | `bot/handlers/message.py` | ✅ Vérifié OK (déjà correct) |
+| Migration mémoire → SQLite | `bot/services/storage_service.py` (nouveau), `bot/handlers/message.py`, `bot/handlers/admin.py`, `bot/main.py` | ✅ Fait |
+
+**Détails migration SQLite :**
+- DB : `/data/inboq.db` — volume Railway à monter sur `/data` (TODO dans le code)
+- Tables : `conversations`, `leads`, `stats`
+- Stats "messages aujourd'hui" stockées par clé journalière (`messages_YYYY-MM-DD`), pas de reset à gérer
+- `init_db()` appelé au démarrage dans `main.py`
+
+---
+
 ## 🐛 Problèmes Connus
 
 ### 1. Devise Stripe (USD vs EUR)
