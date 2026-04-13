@@ -133,6 +133,8 @@ Client reçoit lien bot Telegram + instructions
 | Bug #1 — `/start` affiche `WELCOME_MESSAGE` | `bot/handlers/start.py`, `bot/config.py` | ✅ Vérifié OK (rien à modifier) |
 | Bug #2 — notification admin utilise `ADMIN_CHAT_ID` (env var) | `bot/handlers/message.py` | ✅ Vérifié OK (déjà correct) |
 | Migration mémoire → SQLite | `bot/services/storage_service.py` (nouveau), `bot/handlers/message.py`, `bot/handlers/admin.py`, `bot/main.py` | ✅ Fait |
+| Scoring qualification déterministe | `examples/marie_dupont_config.json` (bloc `qualification`), `bot/services/qualify_service.py` | ✅ Fait |
+| Branchement flow qualification complet | `bot/services/storage_service.py` (colonne `state`, `get/set_state`), `bot/config.py` (`load_client_config()`), `bot/services/notify_service.py` (nouveau format + résumé OpenAI), `bot/handlers/message.py` (flow 5 étapes) | ✅ Fait |
 
 **Détails migration SQLite :**
 - DB : `/data/inboq.db` — volume Railway à monter sur `/data` (TODO dans le code)

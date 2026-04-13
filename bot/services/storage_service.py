@@ -30,6 +30,7 @@ def init_db() -> None:
             CREATE TABLE IF NOT EXISTS conversations (
                 user_id    INTEGER PRIMARY KEY,
                 history    TEXT NOT NULL,
+                state      TEXT NOT NULL DEFAULT 'new',
                 updated_at TEXT NOT NULL
             );
 
@@ -47,6 +48,11 @@ def init_db() -> None:
                 value TEXT NOT NULL
             );
         """)
+        # Idempotent migration: add state column to existing DBs
+        try:
+            conn.execute("ALTER TABLE conversations ADD COLUMN state TEXT NOT NULL DEFAULT 'new'")
+        except sqlite3.OperationalError:
+            pass  # column already exists
 
 
 # ---------------------------------------------------------------------------
@@ -85,6 +91,31 @@ def count_active_conversations() -> int:
     with _get_conn() as conn:
         row = conn.execute("SELECT COUNT(*) AS n FROM conversations").fetchone()
     return row["n"] if row else 0
+
+
+def get_state(user_id: int) -> str:
+    """Return the conversation state for a user ('new' if no row exists)."""
+    with _get_conn() as conn:
+        row = conn.execute(
+            "SELECT state FROM conversations WHERE user_id = ?", (user_id,)
+        ).fetchone()
+    return row["state"] if row else "new"
+
+
+def set_state(user_id: int, state: str) -> None:
+    """Upsert the conversation state for a user."""
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).isoformat()
+    with _get_conn() as conn:
+        conn.execute(
+            """
+            INSERT INTO conversations (user_id, history, state, updated_at)
+            VALUES (?, '[]', ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET state = excluded.state,
+                                               updated_at = excluded.updated_at
+            """,
+            (user_id, state, now),
+        )
 
 
 # ---------------------------------------------------------------------------

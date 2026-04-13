@@ -81,6 +81,26 @@
     "Avez-vous une date en tête ?",
     "Avez-vous déjà été cliente chez Marie ?"
   ],
+  "qualification": {
+    "score_threshold": 3,
+    "criteria": {
+      "ton_respectueux": 1,
+      "prestation_identifiee": 1,
+      "date_mentionnee": 1,
+      "tarif_accepte": 1,
+      "message_developpe": 1
+    },
+    "disqualifiers": [
+      "négociation de tarif",
+      "trop vague",
+      "irrespectueux"
+    ],
+    "qualifying_questions": [
+      "Quelle prestation vous intéresse ?",
+      "Vous avez une date ou un créneau en tête ?",
+      "C'est votre première fois ?"
+    ]
+  },
   "personality": {
     "tone": "chaleureux et professionnel",
     "formality": "vouvoiement",
